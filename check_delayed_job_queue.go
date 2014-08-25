@@ -44,15 +44,17 @@ func main() {
 	var dbuser string
 	var dbpassword string
 	var dbhost string
+	var dbport string
 	var debug bool
 	var warning int
 	var critical int
 
 	// Parse command line options
 	flag.StringVar(&dbname, "dbname", "", "database name")
-	flag.StringVar(&dbuser, "dbuser", "root", "database username")
+	flag.StringVar(&dbuser, "dbuser", "", "database username")
 	flag.StringVar(&dbpassword, "dbpassword", "", "database password")
 	flag.StringVar(&dbhost, "dbhost", "", "database host")
+	flag.StringVar(&dbport, "dbport", "3306", "database port")
 	flag.BoolVar(&debug, "debug", false, "debug mode")
 	flag.IntVar(&warning, "warning", 5, "warning threshold")
 	flag.IntVar(&critical, "critical", 3, "critical threshold")
@@ -66,6 +68,7 @@ func main() {
 		fmt.Println("dbuser:", dbuser)
 		fmt.Println("dbpassword:", dbpassword)
 		fmt.Println("dbhost:", dbhost)
+		fmt.Println("dbport:", dbport)
 		fmt.Println("warning:", warning)
 		fmt.Println("critical:", critical)
 		fmt.Println("==============")
@@ -76,9 +79,13 @@ func main() {
 		dbpassword = ":" + dbpassword
 	}
 	if dbhost != "" {
-		dbhost = "@" + dbhost
+		dbhost = "@tcp(" + dbhost + ":" + dbport + ")"
 	}
-	db, err := sql.Open("mysql", dbuser+dbpassword+dbhost+"/"+dbname)
+	dsn := dbuser + dbpassword + dbhost + "/" + dbname
+	if debug == true {
+		fmt.Println("dsn: ", dsn)
+	}
+	db, err := sql.Open("mysql", dsn)
 	if err != nil {
 		final(err.Error())
 	}
