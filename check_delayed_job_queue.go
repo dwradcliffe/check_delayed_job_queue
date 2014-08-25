@@ -43,6 +43,7 @@ func main() {
 	var dbname string
 	var dbuser string
 	var dbpassword string
+	var dbhost string
 	var debug bool
 	var warning int
 	var critical int
@@ -51,9 +52,10 @@ func main() {
 	flag.StringVar(&dbname, "dbname", "", "database name")
 	flag.StringVar(&dbuser, "dbuser", "root", "database username")
 	flag.StringVar(&dbpassword, "dbpassword", "", "database password")
+	flag.StringVar(&dbhost, "dbhost", "", "database host")
 	flag.BoolVar(&debug, "debug", false, "debug mode")
-	flag.IntVar(&warning, "warning", 5, "the warning threshold")
-	flag.IntVar(&critical, "critical", 3, "the critical threshold")
+	flag.IntVar(&warning, "warning", 5, "warning threshold")
+	flag.IntVar(&critical, "critical", 3, "critical threshold")
 	flag.Parse()
 
 	// Print debug info
@@ -63,13 +65,20 @@ func main() {
 		fmt.Println("dbname:", dbname)
 		fmt.Println("dbuser:", dbuser)
 		fmt.Println("dbpassword:", dbpassword)
+		fmt.Println("dbhost:", dbhost)
 		fmt.Println("warning:", warning)
 		fmt.Println("critical:", critical)
 		fmt.Println("==============")
 	}
 
 	// Run Query
-	db, err := sql.Open("mysql", dbuser+"@"+dbpassword+"/"+dbname)
+	if dbpassword != "" {
+		dbpassword = ":" + dbpassword
+	}
+	if dbhost != "" {
+		dbhost = "@" + dbhost
+	}
+	db, err := sql.Open("mysql", dbuser+dbpassword+dbhost+"/"+dbname)
 	if err != nil {
 		final(err.Error())
 	}
