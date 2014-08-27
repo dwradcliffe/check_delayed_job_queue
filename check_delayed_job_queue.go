@@ -13,7 +13,7 @@ import (
 	"strconv"
 )
 
-var exitCode int = 3
+var exitCode = 3
 var count int
 
 func codeToString() string {
