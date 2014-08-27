@@ -16,6 +16,7 @@ import (
 var exitCode = 3
 var count int
 
+// codeToString returns the standard nagios status string based on the current exitCode value
 func codeToString() string {
 	switch exitCode {
 	case 0:
@@ -28,10 +29,12 @@ func codeToString() string {
 	return "UNKNOWN"
 }
 
+// done is used to exit the process with the job count
 func done() {
 	final(strconv.Itoa(count) + " queued jobs")
 }
 
+// final prints the status string and the provided output and then exits the program
 func final(outString string) {
 	fmt.Println(codeToString() + ": " + outString)
 	os.Exit(exitCode)
